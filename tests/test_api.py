@@ -43,18 +43,20 @@ def test_pictures_json_is_not_empty(client):
 
 
 def test_post_picture(picture, client):
-    # create a brand new picture to upload
-    res = client.post("/picture", data=json.dumps(picture),
+    # Create a brand new picture to upload
+    res = client.post(f"/picture/{picture['id']}", data=json.dumps(picture),
                       content_type="application/json")
     assert res.status_code == 201
     assert res.json['id'] == picture['id']
+    
+    # Verify the count of pictures
     res = client.get("/count")
     assert res.status_code == 200
     assert res.json['length'] == 11
 
 def test_post_picture_duplicate(picture, client):
-    # create a brand new picture to upload
-    res = client.post("/picture", data=json.dumps(picture),
+    # Attempt to upload the same picture again
+    res = client.post(f"/picture/{picture['id']}", data=json.dumps(picture),
                       content_type="application/json")
     assert res.status_code == 302
     assert res.json['Message'] == f"picture with id {picture['id']} already present"
